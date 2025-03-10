@@ -55,6 +55,7 @@ void simulate_game(Game_data& game, Player& player, std::mt19937& gen, std::map<
         if (game.prison && player.get_position() == game.prison_filed)
         {
             player.set_position(player.get_position() - game.prison_punishment);
+            probability_map[player.get_position()]++;
         }
     }
 }
@@ -67,10 +68,10 @@ void save_to_csv(const Game_data& game, const std::string& filename = "prawdopod
 
     for (int i = 1; i <= game.fields_num; i++)
     {
-        double p1 = (game.probability_1.count(i) ? (static_cast<double>(game.probability_1.at(i)) / 100) : 0);
-        double p2 = (game.probability_2.count(i) ? (static_cast<double>(game.probability_2.at(i)) / 100) : 0);
-        double p3 = (game.probability_3.count(i) ? (static_cast<double>(game.probability_3.at(i)) / 1000000) : 0);
-        double p4 = (game.probability_4.count(i) ? (static_cast<double>(game.probability_4.at(i)) / 1000000) : 0);
+        double p1 = (game.probability_1.count(i) ? (static_cast<double>(game.probability_1.at(i)) / 100 ) * 100 : 0);
+        double p2 = (game.probability_2.count(i) ? (static_cast<double>(game.probability_2.at(i)) / 100 ) * 100 : 0);
+        double p3 = (game.probability_3.count(i) ? (static_cast<double>(game.probability_3.at(i)) / 1000000) * 100 : 0);
+        double p4 = (game.probability_4.count(i) ? (static_cast<double>(game.probability_4.at(i)) / 1000000) * 100 : 0);
 
         file << i << "," << p1 << "," << p2 << "," << p3 << "," << p4 << "\n";
     }
@@ -110,5 +111,5 @@ int main()
 
     save_to_csv(game);
 
-    std::cout << "Dane zostaly zapisane do prawdopodobienstwo.csv!\n";
+    std::cout << "Dane zostaly zapisane do prawdopodobienstwo.csv\n";
 }

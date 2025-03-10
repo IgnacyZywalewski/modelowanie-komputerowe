@@ -6,7 +6,7 @@ os.makedirs("wykresy", exist_ok = True)
 
 df = pd.read_csv("prawdopodobienstwo.csv")
 
-titles = ["n = 100, bez więzienia", "n = 100 z więzieniem", "n = 1000000, bez więzienia", "n = 1000000, z więzieniem"]
+titles = ["n = 100, bez więzienia", "n = 100, z więzieniem", "n = 1000000, bez więzienia", "n = 1000000, z więzieniem"]
 cases = ["1", "2", "3", "4"]
 
 i = 0
@@ -21,4 +21,4 @@ for case in cases:
     plt.close()
     i = i + 1
 
-print("Wykresy zostały zapisane w folderze 'wykresy/")
+print("Wykresy zostały zapisane w folderze wykresy")
