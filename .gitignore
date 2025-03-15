@@ -1,11 +1,19 @@
-﻿game_of_life/x64/
+﻿game_of_life/.vs/
+game_of_life/x64/
 game_of_life/x64/Debug/
 game_of_life/game_of_life/x64/
 game_of_life/game_of_life/x64/Debug/
 game_of_life/game_of_life/frames/
 
+monopoly/.vs/
 monopoly/x64/
 monopoly/x64/Debug/
 monopoly/monopoly/x64/
 monopoly/monopoly/x64/Debug/
-monopoly/monopoly/wykresy/
+
+plamy/.vs/
+plamy/x64/
+plamy/x64/Debug/
+plamy/plamy/x64/
+plamy/plamy/x64/Debug/
+plamy/plamy/frames/
