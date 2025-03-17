@@ -20,6 +20,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="wykres.py" />
+    <None Include="wykres.py">
+      <Filter>Pliki źródłowe</Filter>
+    </None>
   </ItemGroup>
 </Project>

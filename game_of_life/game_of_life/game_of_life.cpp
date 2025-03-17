@@ -10,7 +10,6 @@
 
 struct Cell
 {
-    Cell() = default;
     Cell(bool alive) : alive(alive) {}
 
     bool is_alive() const { return alive; }
@@ -158,13 +157,13 @@ int main()
     std::map<int, int> map;
     int iteration = 0;
 
-    int width = 250;
-    int height = 250;
+    int width = 100;
+    int height = 100;
 
     set_board(old_board, width, height);
     set_board(new_board, width, height);
 
-    randomize_board(old_board, gen, 0.5);
+    randomize_board(old_board, gen, 0.05);
 
     while (iteration < 100)
     {
