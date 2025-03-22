@@ -23,5 +23,8 @@
     <None Include="wykres.py">
       <Filter>Pliki źródłowe</Filter>
     </None>
+    <None Include="animacje.py">
+      <Filter>Pliki źródłowe</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -2,11 +2,10 @@
 #include <string>
 #include <vector>
 #include <random>
-#include <thread> 
-#include <chrono>
 #include <map>
 #include <fstream>
 #include <filesystem>
+#include <iomanip>
 
 struct Cell
 {
@@ -18,11 +17,6 @@ struct Cell
 private:
     bool alive;
 };
-
-void set_board(std::vector<std::vector<Cell>>& board, int h, int w)
-{
-    board = std::vector<std::vector<Cell>>(w, std::vector<Cell>(h, Cell(false)));
-}
 
 void randomize_board(std::vector<std::vector<Cell>>& board, std::mt19937& gen, double alive_probability = 0.5)
 {
@@ -103,23 +97,48 @@ void update_map(std::map<int, int>& map, std::vector<std::vector<Cell>>& board, 
     map[i] = alive_cells;
 }
 
-void save_to_csv(std::map<int, int> map, int width, int height)
+void save_to_csv(const std::map<double, std::map<int, int>>& all_maps, int width, int height)
 {
-    std::ofstream file("probability.csv");
-    file << "Iteration,AliveRatio\n";
-    for (auto i : map)
+    std::ofstream file("all_simulations.csv", std::ios::out);
+    file << "Iteration";
+
+    for (const auto& prob_map : all_maps)
     {
-        file << i.first << "," << static_cast<double>(i.second) / (width * height) * 100 << "\n";
+        file << ",p(" << prob_map.first << ")";
     }
+    file << "\n";
+
+    for (int iteration = 0; iteration < 1000; ++iteration)
+    {
+        file << iteration;
+        for (const auto& prob_map : all_maps)
+        {
+            if (prob_map.second.find(iteration) != prob_map.second.end())
+            {
+                double alive_ratio = static_cast<double>(prob_map.second.at(iteration)) / (width * height) * 100;
+                file << "," << alive_ratio;
+            }
+            else
+            {
+                file << ",";
+            }
+        }
+        file << "\n";
+    }
+
     file.close();
 }
 
 
-void save_to_ppm(const std::vector<std::vector<Cell>>& board, int iteration)
+void save_to_ppm(const std::vector<std::vector<Cell>>& board, int iteration, double prob)
 {
-    std::filesystem::create_directory("frames");
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(2) << prob;
+    std::string prob_str = ss.str();
 
-    std::string filename = "frames/frame_" + std::to_string(iteration) + ".ppm";
+    std::filesystem::create_directory("frames/p(" + prob_str + ")");
+
+    std::string filename = "frames/p(" + prob_str + ")/frame_" + std::to_string(iteration) + ".ppm";
     std::ofstream file(filename, std::ios::binary);
 
     size_t width = board.size();
@@ -146,35 +165,46 @@ void save_to_ppm(const std::vector<std::vector<Cell>>& board, int iteration)
     file.close();
 }
 
+void simulate_game(std::mt19937 gen, double prob, std::map<double, std::map<int, int >>& all_maps)
+{
+    int iteration = 0;
+    int width = 100;
+    int height = 100;
+
+    std::vector<std::vector<Cell>> old_board = std::vector<std::vector<Cell>>(width, std::vector<Cell>(height, Cell(false)));
+    std::vector<std::vector<Cell>> new_board = std::vector<std::vector<Cell>>(width, std::vector<Cell>(height, Cell(false)));
+
+    std::map<int, int> map;
+
+    randomize_board(old_board, gen, prob);
+
+    while (iteration < 1000)
+    {
+        update_map(map, old_board, iteration);
+        save_to_ppm(old_board, iteration, prob);
+        update_board(old_board, new_board);
+        old_board = new_board;
+        iteration++;
+    }
+
+    prob = std::ceil(prob * 100.0) / 100.0;
+    all_maps[prob] = map;
+}
+
 int main()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    std::vector<std::vector<Cell>> old_board;
-    std::vector<std::vector<Cell>> new_board;
+    std::map<double, std::map<int, int>> all_maps;
 
-    std::map<int, int> map;
-    int iteration = 0;
+    simulate_game(gen, 0.05, all_maps);
+    simulate_game(gen, 0.1, all_maps);
+    simulate_game(gen, 0.3, all_maps);
+    simulate_game(gen, 0.6, all_maps);
+    simulate_game(gen, 0.75, all_maps);
+    simulate_game(gen, 0.8, all_maps);
+    simulate_game(gen, 0.95, all_maps);
 
-    int width = 100;
-    int height = 100;
-
-    set_board(old_board, width, height);
-    set_board(new_board, width, height);
-
-    randomize_board(old_board, gen, 0.05);
-
-    while (iteration < 100)
-    {
-        update_map(map, old_board, iteration);
-        save_to_ppm(old_board, iteration);
-        update_board(old_board, new_board);
-
-        old_board = new_board;
-        iteration++;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
-    save_to_csv(map, width, height);
+    save_to_csv(all_maps, 100, 100);
 }
