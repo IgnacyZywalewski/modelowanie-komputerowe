@@ -13,7 +13,7 @@ for column in df.columns[1:]:
     
     plt.xlabel("Iteracja")
     plt.ylabel("Procent zywych komorek (%)")
-    plt.title(f"Wykres zmiany zywych komorek w czasie dla ({column})")
+    plt.title(f"Wykres zmiany zywych komorek w czasie dla {column}")
     plt.xticks(rotation=45)
     plt.grid(axis='y', linestyle="--", alpha=0.6)
 

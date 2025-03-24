@@ -1,102 +1,6 @@
-﻿#include <iostream>
-#include <string>
-#include <vector>
-#include <random>
-#include <map>
-#include <fstream>
-#include <filesystem>
-#include <iomanip>
+﻿#include "game_of_life.h"
 
-struct Cell
-{
-    Cell(bool alive) : alive(alive) {}
-
-    bool is_alive() const { return alive; }
-    void set_state(bool new_state) { alive = new_state; }
-
-private:
-    bool alive;
-};
-
-void randomize_board(std::vector<std::vector<Cell>>& board, std::mt19937& gen, double alive_probability = 0.5)
-{
-    std::bernoulli_distribution dist(alive_probability);
-    for (int i = 0; i < board.size(); i++)
-    {
-        for (int j = 0; j < board[i].size(); j++)
-        {
-            board[i][j].set_state(dist(gen));
-        }
-    }
-}
-
-int count_alive_neighbors(const std::vector<std::vector<Cell>>& board, int x, int y)
-{
-    int alive_neighbors = 0;
-    size_t w = board.size();
-    size_t h = board[0].size();
-
-    for (int dx = -1; dx <= 1; dx++)
-    {
-        for (int dy = -1; dy <= 1; dy++)
-        {
-            if (dx == 0 && dy == 0) continue;
-
-            int nx = x + dx;
-            int ny = y + dy;
-
-            if (nx >= 0 && nx < w && ny >= 0 && ny < h)
-            {
-                if (board[nx][ny].is_alive())
-                {
-                    alive_neighbors++;
-                }
-            }
-        }
-    }
-    return alive_neighbors;
-}
-
-void update_board(std::vector<std::vector<Cell>>& old_board, std::vector<std::vector<Cell>>& new_board)
-{
-    size_t w = old_board.size();
-    size_t h = old_board[0].size();
-
-    for (int i = 0; i < w; i++)
-    {
-        for (int j = 0; j < h; j++)
-        {
-            int alive_neighbors = count_alive_neighbors(old_board, i, j);
-
-            if (old_board[i][j].is_alive())
-            {
-                new_board[i][j].set_state(alive_neighbors == 2 || alive_neighbors == 3);
-            }
-            else
-            {
-                new_board[i][j].set_state(alive_neighbors == 3);
-            }
-        }
-    }
-}
-
-void update_map(std::map<int, int>& map, std::vector<std::vector<Cell>>& board, int i)
-{
-    size_t w = board.size();
-    size_t h = board[0].size();
-
-    int alive_cells = 0;
-    for (int i = 0; i < w; i++)
-    {
-        for (int j = 0; j < h; j++)
-        {
-            if (board[i][j].is_alive())
-                alive_cells++;
-        }
-    }
-    map[i] = alive_cells;
-}
-
+//Zadanie 2
 void save_to_csv(const std::map<double, std::map<int, int>>& all_maps, int width, int height)
 {
     std::ofstream file("all_simulations.csv", std::ios::out);
@@ -133,7 +37,7 @@ void save_to_csv(const std::map<double, std::map<int, int>>& all_maps, int width
 void save_to_ppm(const std::vector<std::vector<Cell>>& board, int iteration, double prob)
 {
     std::stringstream ss;
-    ss << std::fixed << std::setprecision(2) << prob;
+    ss << std::defaultfloat << prob;
     std::string prob_str = ss.str();
 
     std::filesystem::create_directory("frames/p(" + prob_str + ")");
@@ -165,14 +69,12 @@ void save_to_ppm(const std::vector<std::vector<Cell>>& board, int iteration, dou
     file.close();
 }
 
-void simulate_game(std::mt19937 gen, double prob, std::map<double, std::map<int, int >>& all_maps)
+void simulate_game(std::mt19937 gen, double prob, std::map<double, std::map<int, int >>& all_maps, int w, int h)
 {
     int iteration = 0;
-    int width = 100;
-    int height = 100;
 
-    std::vector<std::vector<Cell>> old_board = std::vector<std::vector<Cell>>(width, std::vector<Cell>(height, Cell(false)));
-    std::vector<std::vector<Cell>> new_board = std::vector<std::vector<Cell>>(width, std::vector<Cell>(height, Cell(false)));
+    std::vector<std::vector<Cell>> old_board(w, std::vector<Cell>(h, Cell(false)));
+    std::vector<std::vector<Cell>> new_board(w, std::vector<Cell>(h, Cell(false)));
 
     std::map<int, int> map;
 
@@ -186,25 +88,107 @@ void simulate_game(std::mt19937 gen, double prob, std::map<double, std::map<int,
         old_board = new_board;
         iteration++;
     }
-
-    prob = std::ceil(prob * 100.0) / 100.0;
     all_maps[prob] = map;
 }
+
+
+//Zadanie 3
+std::vector<double> calculate_density(std::mt19937& gen, double prob, int size, int Tmax, int N)
+{
+    std::vector<double> densities;
+
+    for (int n = 0; n < N; n++)
+    {
+        std::vector<std::vector<Cell>> board(size, std::vector<Cell>(size, Cell(false)));
+        std::vector<std::vector<Cell>> new_board(size, std::vector<Cell>(size, Cell(false)));
+
+        randomize_board(board, gen, prob);
+
+        double total_density = 0.0;
+
+        for (int t = 0; t < Tmax; t++)
+        {            
+            int alive_cells = 0;
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    alive_cells = count_alive_neighbors(board, i, j);
+                }
+            }
+
+            double density = static_cast<double>(alive_cells) / (size * size);
+            total_density += density;
+
+            update_board(board, new_board);
+            board = new_board;
+        }
+        densities.push_back(total_density / Tmax);
+    }
+    return densities;
+}
+
+double mean(const std::vector<double>& values)
+{
+    double sum = 0.0;
+    for (double v : values)
+        sum += v;
+    return sum / values.size();
+}
+
+double standard_error(const std::vector<double>& values)
+{
+    double avg = mean(values);
+    double sum = 0.0;
+
+    for (double v : values)
+        sum += (v - avg) * (v - avg);
+
+    return sqrt(sum / (values.size() - 1)) / sqrt(values.size());
+}
+
 
 int main()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
 
+    //Zadanie 2
+    /*
+    int width = 100;
+    int height = 100;
     std::map<double, std::map<int, int>> all_maps;
 
-    simulate_game(gen, 0.05, all_maps);
-    simulate_game(gen, 0.1, all_maps);
-    simulate_game(gen, 0.3, all_maps);
-    simulate_game(gen, 0.6, all_maps);
-    simulate_game(gen, 0.75, all_maps);
-    simulate_game(gen, 0.8, all_maps);
-    simulate_game(gen, 0.95, all_maps);
-
+    simulate_game(gen, 0.05, all_maps, width, height);
+    simulate_game(gen, 0.1, all_maps, width, height);
+    simulate_game(gen, 0.3, all_maps, width, height);
+    simulate_game(gen, 0.6, all_maps, width, height);
+    simulate_game(gen, 0.75, all_maps, width, height);
+    simulate_game(gen, 0.8, all_maps, width, height);
+    simulate_game(gen, 0.95, all_maps, width, height);
+    
     save_to_csv(all_maps, 100, 100);
+    */
+
+    //Zadanie 3
+    std::array<int, 5> L_values = { 10, 100, 200, 500, 1000 };
+    double prob = 0.5;
+    int Tmax = 1000;
+    int N = 100;
+
+    std::ofstream file("standard_error.csv");
+    file << "L,StandardError\n";
+
+    for (int L : L_values)
+    {
+        std::vector<double> densities = calculate_density(gen, prob, L, Tmax, N);
+        double avg_density = mean(densities);
+        double error = standard_error(densities);
+
+        std::cout << "L = " << L << ", Mean Density = " << avg_density << ", Standard Error = " << error << "\n";
+        file << L << "," << error << "\n";
+    }
+
+    file.close();
+
 }

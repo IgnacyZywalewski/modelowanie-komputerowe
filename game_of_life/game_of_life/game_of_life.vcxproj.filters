@@ -20,11 +20,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="wykres.py">
-      <Filter>Pliki źródłowe</Filter>
-    </None>
     <None Include="animacje.py">
       <Filter>Pliki źródłowe</Filter>
     </None>
+    <None Include="wykresy.py">
+      <Filter>Pliki źródłowe</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game_of_life.h">
+      <Filter>Pliki źródłowe</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

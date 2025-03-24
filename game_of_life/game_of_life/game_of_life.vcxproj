@@ -132,7 +132,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="animacje.py" />
-    <None Include="wykres.py" />
+    <None Include="wykresy.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game_of_life.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
