@@ -23,7 +23,10 @@
     <None Include="animacje.py">
       <Filter>Pliki źródłowe</Filter>
     </None>
-    <None Include="wykresy.py">
+    <None Include="wykresy_2.py">
+      <Filter>Pliki źródłowe</Filter>
+    </None>
+    <None Include="wykresy_3.py">
       <Filter>Pliki źródłowe</Filter>
     </None>
   </ItemGroup>

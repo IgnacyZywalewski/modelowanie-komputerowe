@@ -154,7 +154,6 @@ int main()
     std::mt19937 gen(rd());
 
     //Zadanie 2
-    /*
     int width = 100;
     int height = 100;
     std::map<double, std::map<int, int>> all_maps;
@@ -168,7 +167,7 @@ int main()
     simulate_game(gen, 0.95, all_maps, width, height);
     
     save_to_csv(all_maps, 100, 100);
-    */
+    
 
     //Zadanie 3
     std::array<int, 5> L_values = { 10, 100, 200, 500, 1000 };
@@ -190,5 +189,4 @@ int main()
     }
 
     file.close();
-
 }

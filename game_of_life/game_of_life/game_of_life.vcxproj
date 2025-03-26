@@ -132,7 +132,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="animacje.py" />
-    <None Include="wykresy.py" />
+    <None Include="wykresy_2.py" />
+    <None Include="wykresy_3.py" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_of_life.h" />
