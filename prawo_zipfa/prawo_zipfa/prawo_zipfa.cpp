@@ -1,85 +1,81 @@
-﻿#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <fstream>
-#include <cctype>
-#include <algorithm>
+﻿#include "prawo_zipfa.h"
 
-void read_file(std::string filename, std::map<std::string, int>& map)
-{
-    std::ifstream file(filename);
+struct Text {
+    std::map<std::string, int> frequency_map;
+    std::vector<std::pair<std::string, int>> frequency_vec_sort;
+    std::map<int, int> rank_map;
+};
 
-    std::string word;
-    while (file >> word)
-    {
-        std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-        map[word]++;
-    }
-
-    file.close();
-}
-
-
-template <typename Y>
-void print_map(Y map)
-{
-    for (const auto& elem : map)
-    {
-        std::cout << elem.first << ", " << elem.second << "\n";
-    }
-    std::cout << "\n";
-}
-
-void print_summary(std::map<int, int>& map, std::vector<std::pair<std::string, int>>& vec)
-{
-    int i = 0;
-    for (const auto& elem : map)
-    {
-        std::cout << "ranga = " << elem.first << ", slowo: " << vec[i].first << ", ilosc wystapien = " << elem.second << "\n";
-        i++;
-    }
-}
-
-std::vector<std::pair<std::string, int>> sort_map(std::map<std::string, int> map)
-{
-    std::vector<std::pair<std::string, int>> vector(map.begin(), map.end());
-
-    std::sort(vector.begin(), vector.end(), [](const auto& a, const auto& b) { return a.second > b.second; });
-
-    return vector;
-}
-
-void save_to_csv(std::map<int, int> map)
+void save_to_csv(std::map<std::string, std::map<int, int>> all_maps)
 {
     std::ofstream file("rank_map.csv");
 
-    file << "Rank,Frequency\n";
-    for (const auto& elem : map)
+    file << "Rank";
+    for (const auto& [text_name, _] : all_maps)
     {
-        file << elem.first << "," << elem.second << "\n";
+        file << "," << text_name;
+    }
+    file << "\n";
+
+    int max_rank = 0;
+    for (const auto& [_, rank_map] : all_maps)
+    {
+        if (!rank_map.empty())
+        {
+            int last_rank = rank_map.rbegin()->first;
+            if (last_rank > max_rank) {
+                max_rank = last_rank;
+            }
+        }
+    }
+
+    for (int rank = 1; rank < max_rank; rank++)
+    {
+        file << rank;
+        for (const auto& [text_name, rank_map] : all_maps)
+        {
+            if (rank_map.count(rank))
+            {
+                file << "," << rank_map.at(rank);
+            }
+            else
+            {
+                file << ",0";
+            }
+        }
+        file << "\n";
     }
     file.close();
+}
+
+void analize_text(std::string filename, Text& text, std::map<std::string, std::map<int, int>>& all_maps)
+{
+    read_file(filename, text.frequency_map);
+    text.frequency_vec_sort = sort_map(text.frequency_map);
+
+    int index = 1;
+    for (const auto& elem : text.frequency_vec_sort)
+    {
+        text.rank_map[index++] = elem.second;
+    }
+
+    //print_summary(text.rank_map, text.frequency_vec_sort);
+
+    all_maps[filename] = text.rank_map;
 }
 
 int main()
 {
-    std::map<std::string, int> frequency_map;
+    SetConsoleOutputCP(65001);
 
-    std::string filename = "text.txt";
-    read_file(filename, frequency_map);
-    size_t words_num = frequency_map.size();
+    std::map<std::string, std::map<int, int>> all_maps;
 
-    std::vector<std::pair<std::string, int>> frequency_vec_sort = sort_map(frequency_map);
+    Text pan_tadeusz;
+    Text romeo_i_julia;
 
-    std::map<int, int> rank_map;
-    int index = 1;
-    for (const auto& elem : frequency_vec_sort)
-    {
-        rank_map[index++] = elem.second;
-    }
+    analize_text("pan_tadeusz", pan_tadeusz, all_maps);
+    analize_text("romeo_i_julia", romeo_i_julia, all_maps);
 
-    print_summary(rank_map, frequency_vec_sort);
+    save_to_csv(all_maps);
 
-    save_to_csv(rank_map);
 }

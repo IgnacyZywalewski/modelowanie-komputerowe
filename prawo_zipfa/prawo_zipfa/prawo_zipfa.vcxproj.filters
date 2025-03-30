@@ -24,4 +24,9 @@
       <Filter>Pliki źródłowe</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="prawo_zipfa.h">
+      <Filter>Pliki źródłowe</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
