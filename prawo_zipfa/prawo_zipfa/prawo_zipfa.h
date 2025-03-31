@@ -13,18 +13,22 @@
 void read_file(std::string filename, std::map<std::string, int>& map)
 {
     std::locale loc("pl_PL.utf8");
-
     std::ifstream file("teksty/" + filename + ".txt");
-
     std::string word;
+
     while (file >> word)
     {
-        word.erase(std::remove_if(word.begin(), word.end(), ::ispunct), word.end());
+        std::string clean;
 
-        for (char& ch : word)
+        for (char ch : word)
         {
-            ch = std::tolower(ch, loc);
+            if (std::isalpha(static_cast<unsigned char>(ch), loc) || std::string("ąćęłńóśźżĄĆĘŁŃÓŚŹŻ").find(ch) != std::string::npos)
+            {
+                clean += std::tolower(static_cast<unsigned char>(ch), loc);
+            }
         }
+
+        word = clean;
 
         if (!word.empty())
         {

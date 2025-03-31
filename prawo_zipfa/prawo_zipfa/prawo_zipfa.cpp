@@ -1,4 +1,4 @@
-﻿#include "prawo_zipfa.h"
+#include "prawo_zipfa.h"
 
 struct Text {
     std::map<std::string, int> frequency_map;
@@ -72,10 +72,11 @@ int main()
 
     Text pan_tadeusz;
     Text romeo_i_julia;
+    Text _1984;
 
-    analize_text("pan_tadeusz", pan_tadeusz, all_maps);
-    analize_text("romeo_i_julia", romeo_i_julia, all_maps);
+    analize_text("Pan Tadeusz", pan_tadeusz, all_maps);
+    analize_text("Romeo i Julia", romeo_i_julia, all_maps);
+    analize_text("1984 - po angielsku", _1984, all_maps);
 
     save_to_csv(all_maps);
-
 }
