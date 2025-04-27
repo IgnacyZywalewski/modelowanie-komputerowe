@@ -9,9 +9,37 @@ void ofApp::setup()
 		vector<Body> bodies;
 		vector<ofVec2f> prev_pos;
 
+		/*
 		bodies.emplace_back(400, ofVec2f(ofGetWidth() / 2.0, (ofGetHeight() / 2.0) + 30.0), ofVec2f(0, 2), ofColor(0, 0, 255));
 		bodies.emplace_back(400, ofVec2f((ofGetWidth() / 2.0) - 30.0, (ofGetHeight() / 2.0) - 30.0), ofVec2f(-2, -1), ofColor(0, 255, 0));
 		bodies.emplace_back(400, ofVec2f((ofGetWidth() / 2.0) + 30.0, (ofGetHeight() / 2.0) - 30.0), ofVec2f(1, 0), ofColor(255, 0, 0));
+		*/
+
+		float scale = 200.0;
+		float mass_scale = scale * scale;
+		float velocity_scale = sqrt(scale);
+
+		bodies.emplace_back(
+			1 * mass_scale,
+			ofVec2f(ofGetWidth() / 2.0 + 0.97000436 * scale, ofGetHeight() / 2.0 - 0.24308753 * scale),
+			ofVec2f(0.93240737 / 2.0 * velocity_scale, 0.86473146 / 2.0 * velocity_scale),
+			ofColor(0, 0, 255)
+		);
+
+		bodies.emplace_back(
+			1 * mass_scale,
+			ofVec2f(ofGetWidth() / 2.0 - 0.97000436 * scale, ofGetHeight() / 2.0 + 0.24308753 * scale),
+			ofVec2f(0.93240737 / 2.0 * velocity_scale, 0.86473146 / 2.0 * velocity_scale),
+			ofColor(255, 0, 0)
+		);
+
+		bodies.emplace_back(
+			1 * mass_scale,
+			ofVec2f(ofGetWidth() / 2.0, ofGetHeight() / 2.0),
+			ofVec2f(-0.93240737 * velocity_scale, -0.86473146 * velocity_scale),
+			ofColor(0, 255, 0)
+		);
+
 
 		for (auto& b : bodies) 
 		{
@@ -22,7 +50,6 @@ void ofApp::setup()
 
 		systems.push_back(bodies);
 		prev_positions.push_back({});
-		avg_distances.push_back({});
 	}
 }
 
@@ -45,21 +72,6 @@ void ofApp::compute_forces(vector<Body>& bodies)
 	}
 }
 
-float ofApp::compute_average_distance(const vector<Body>& bodies) 
-{
-	float total = 0;
-	int count = 0;
-	for (int i = 0; i < bodies.size(); ++i) 
-	{
-		for (int j = i + 1; j < bodies.size(); ++j) 
-		{
-			total += (bodies[i].get_position() - bodies[j].get_position()).length();
-			count++;
-		}
-	}
-	return total / count;
-}
-
 void ofApp::update() 
 {
 	if (current_step >= num_steps) return;
@@ -74,8 +86,6 @@ void ofApp::update()
 		{
 			body.verlet_update(dt, body.get_prev_position());
 		}
-
-		avg_distances[s].push_back(compute_average_distance(bodies));
 	}
 
 	current_step++;
