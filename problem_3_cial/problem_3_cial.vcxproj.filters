@@ -24,4 +24,9 @@
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\wykres.py">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
 </Project>

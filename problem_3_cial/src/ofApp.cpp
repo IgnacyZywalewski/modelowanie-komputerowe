@@ -4,17 +4,19 @@ void ofApp::setup()
 {
 	ofSetFrameRate(60);
 
-	for (int s = 0; s < NUM_SYSTEMS; s++) 
+	vector<float> offsets = { 1.0, 1.5, 2.0 };
+
+	for (int s = 0; s < systems_num; s++)
 	{
 		vector<Body> bodies;
-		vector<ofVec2f> prev_pos;
 
+		float offset = offsets[s];
+		
+		bodies.emplace_back(1000, ofVec2f((ofGetWidth() / 2.0) - offset - 100.0, (ofGetHeight() / 2.0) - 100.0), ofVec2f(0.0, 1.0), ofColor(0, 0, 255));
+		bodies.emplace_back(1000, ofVec2f((ofGetWidth() / 2.0) + offset - 100.0, (ofGetHeight() / 2.0) + 100.0), ofVec2f(0.0, -1.0), ofColor(0, 255, 0));
+		bodies.emplace_back(1000, ofVec2f((ofGetWidth() / 2.0) + 100.0, (ofGetHeight() / 2.0)), ofVec2f(-1.0, 0.0), ofColor(255, 0, 0));
+		
 		/*
-		bodies.emplace_back(400, ofVec2f(ofGetWidth() / 2.0, (ofGetHeight() / 2.0) + 30.0), ofVec2f(0, 2), ofColor(0, 0, 255));
-		bodies.emplace_back(400, ofVec2f((ofGetWidth() / 2.0) - 30.0, (ofGetHeight() / 2.0) - 30.0), ofVec2f(-2, -1), ofColor(0, 255, 0));
-		bodies.emplace_back(400, ofVec2f((ofGetWidth() / 2.0) + 30.0, (ofGetHeight() / 2.0) - 30.0), ofVec2f(1, 0), ofColor(255, 0, 0));
-		*/
-
 		float scale = 200.0;
 		float mass_scale = scale * scale;
 		float velocity_scale = sqrt(scale);
@@ -38,8 +40,7 @@ void ofApp::setup()
 			ofVec2f(ofGetWidth() / 2.0, ofGetHeight() / 2.0),
 			ofVec2f(-0.93240737 * velocity_scale, -0.86473146 * velocity_scale),
 			ofColor(0, 255, 0)
-		);
-
+		);*/
 
 		for (auto& b : bodies) 
 		{
@@ -49,22 +50,22 @@ void ofApp::setup()
 		}
 
 		systems.push_back(bodies);
-		prev_positions.push_back({});
+		distances.push_back(vector<float>());
 	}
 }
 
-void ofApp::compute_forces(vector<Body>& bodies) 
+void ofApp::gravity_force(vector<Body>& bodies) 
 {
 	for (auto& b : bodies) b.set_acceleration({ 0.0, 0.0 });
 
 	for (int i = 0; i < bodies.size(); i++) 
 	{
-		for (int j = i + 1; j < bodies.size(); ++j) 
+		for (int j = i + 1; j < bodies.size(); j++) 
 		{
-			ofVec2f dir = bodies[j].get_position() - bodies[i].get_position();
-			float dist_sq = dir.lengthSquared() + 1e-5f;
-			float force_mag = G * bodies[i].get_mass() * bodies[j].get_mass() / dist_sq;
-			ofVec2f force = dir.getNormalized() * force_mag;
+			ofVec2f r = bodies[j].get_position() - bodies[i].get_position();
+			float dist_squared = r.lengthSquared() + 100;
+			float force_mag = G * bodies[i].get_mass() * bodies[j].get_mass() / dist_squared;
+			ofVec2f force = r.getNormalized() * force_mag;
 
 			bodies[i].apply_force(force);
 			bodies[j].apply_force(-force);
@@ -76,16 +77,31 @@ void ofApp::update()
 {
 	if (current_step >= num_steps) return;
 
-	for (int s = 0; s < NUM_SYSTEMS; ++s) 
+	for (int s = 0; s < systems_num; ++s)
 	{
 		auto& bodies = systems[s];
 
-		compute_forces(bodies);
+		gravity_force(bodies);
 
 		for (auto& body : bodies) 
 		{
 			body.verlet_update(dt, body.get_prev_position());
 		}
+
+
+		float avg_distance = 0.0;
+		int count = 0;
+
+		for (int i = 0; i < bodies.size(); i++)
+		{
+			for (int j = i + 1; j < bodies.size(); j++)
+			{
+				avg_distance += (bodies[i].get_position() - bodies[j].get_position()).length();
+				count++;
+			}
+		}
+		avg_distance /= count;
+		distances[s].push_back(avg_distance);
 	}
 
 	current_step++;
@@ -95,12 +111,33 @@ void ofApp::draw()
 {
 	ofBackground(0);
 
-	for (int s = 0; s < NUM_SYSTEMS; s++) 
+	for (auto& b : systems[0])
 	{
-		for (auto& b : systems[s]) 
-		{
-			ofSetColor(b.get_color());
-			ofDrawCircle(b.get_position(), 15);
-		}
+		ofSetColor(b.get_color());
+		ofDrawCircle(b.get_position(), 20);
 	}
+}
+
+void ofApp::exit()
+{
+	ofFile file("distances.csv", ofFile::WriteOnly);
+
+	string header = "step";
+	for (int s = 0; s < systems_num; s++)
+	{
+		header += ",system_" + ofToString(s + 1);
+	}
+	file << header << "\n";
+
+	for (int step = 0; step < distances[0].size(); step++)
+	{
+		string line = ofToString(step);
+		for (int s = 0; s < systems_num; s++)
+		{
+			line += "," + ofToString(distances[s][step]);
+		}
+		file << line << "\n";
+	}
+
+	file.close();
 }

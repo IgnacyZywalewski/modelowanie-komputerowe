@@ -9,16 +9,17 @@ public:
 	void setup();
 	void update();
 	void draw();
+	void exit();
 
 	vector<vector<Body>> systems;
-	vector<vector<ofVec2f>> prev_positions;
+	vector<vector<float>> distances;
 
-	const int NUM_SYSTEMS = 3;
-	const float G = 1.0f;	
-	const float dt = 1.0f;
+	const int systems_num = 3;
+	float G = 0.5;
+	const float dt = 0.5f;
 
-	const int num_steps = 10000;
+	const int num_steps = 3000;
 	int current_step = 0;
 
-	void compute_forces(vector<Body>& bodies);
+	void gravity_force(vector<Body>& bodies);
 };
