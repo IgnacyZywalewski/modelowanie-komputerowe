@@ -4,15 +4,7 @@
 #include <fstream>
 #include <filesystem>
 
-void print_map(std::map<int, int> map)
-{
-    for (const auto& [key, value] : map)
-    {
-        std::cout << key << ": " << value << "\n";
-    }
-}
-
-void save_to_csv(std::map<int, int> map_1, std::map<int, int> map_2)
+void save_to_csv_1(std::map<int, int> map_1, std::map<int, int> map_2)
 {
     std::filesystem::create_directory("dane");
     std::string filename = "dane/zadanie_1.csv";
@@ -63,5 +55,9 @@ void zadanie_1()
 {
     std::map<int, int> histogram_1 = mernenne_twister();
     std::map<int, int> histogram_2 = modulo();
-    save_to_csv(histogram_1, histogram_2);
+    save_to_csv_1(histogram_1, histogram_2);
 }
+
+//Wyniki uzyskane za pomoc¹ algortymu mernenne-twister s¹ lepsze, 
+//poniewa¿ s¹ bardziej równomiernie roz³o¿one co oznacza ¿e wyniki s¹ bardziej losowe i mniej powtarzalne
+//ni¿ te uzyskane za pomoc¹ funkcji rand()

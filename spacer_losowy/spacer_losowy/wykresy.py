@@ -21,7 +21,7 @@ def zadanie_1():
     ax2.set_xlabel("Wartość")
 
     plt.tight_layout()
-    plt.savefig("wykresy/histogram.png")
+    plt.savefig("wykresy/histogram_1.png")
     plt.show()
 
 def zadanie_2_2D():
@@ -49,7 +49,7 @@ def zadanie_2_3D():
 
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot(111, projection='3d')
-    ax.set_title("10 spacerów losowych w 3D")
+    ax.set_title("Ścieżki 10 spacerów losowych (3D)")
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_zlabel("z")
@@ -66,9 +66,25 @@ def zadanie_2_3D():
     plt.savefig("wykresy/spacery_3d.png")
     plt.show()
 
+def zadanie_3():
+    filename = "dane/zadanie_3.csv"
+
+    df = pd.read_csv(filename)
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(df["position"], df["value"], color="blue", width=0.8)
+
+    plt.title("Końcowe pozycje 10000 spacerów losowych (1D)")
+    plt.xlabel("Końcowa pozycja")
+    plt.ylabel("Liczba spacerów")
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig("wykresy/histogram_3.png")
+    plt.show()
 
 
-
-#zadanie_1()
-#zadanie_2_2D()
-#zadanie_2_3D()
+zadanie_1()
+zadanie_2_2D()
+zadanie_2_3D()
+zadanie_3()

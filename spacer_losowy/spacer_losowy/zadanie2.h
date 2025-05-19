@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <array>
+#include <map>
 
 //2D
 void save_to_csv_2D(const std::map<int, std::map<int, std::pair<int, int>>>& all_walks)
