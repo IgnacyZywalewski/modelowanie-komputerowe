@@ -83,7 +83,6 @@ def zadanie_3():
     plt.savefig("wykresy/histogram_3.png")
     plt.show()
 
-
 zadanie_1()
 zadanie_2_2D()
 zadanie_2_3D()

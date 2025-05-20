@@ -1,9 +1,4 @@
 #pragma once
-#include <random>
-#include <filesystem>
-#include <fstream>
-#include <array>
-#include <map>
 
 //2D
 void save_to_csv_2D(const std::map<int, std::map<int, std::pair<int, int>>>& all_walks)
@@ -18,7 +13,7 @@ void save_to_csv_2D(const std::map<int, std::map<int, std::pair<int, int>>>& all
 	}
 	file << "\n";
 
-	int steps = all_walks.begin()->second.size();
+	size_t steps = all_walks.begin()->second.size();
 
 	for (int step = 0; step < steps; step++)
 	{
@@ -34,7 +29,7 @@ void save_to_csv_2D(const std::map<int, std::map<int, std::pair<int, int>>>& all
 	file.close();
 }
 
-std::map<int, std::pair<int, int>> simulate_walk_2D()
+std::map<int, std::pair<int, int>> simulate_walk_2_2D()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -66,7 +61,7 @@ void zadanie_2_2D()
 
 	for (int i = 0; i < walks_num; i++)
 	{
-		all_walks[i] = simulate_walk_2D();
+		all_walks[i] = simulate_walk_2_2D();
 	}
 
 	save_to_csv_2D(all_walks);
@@ -87,7 +82,7 @@ void save_to_csv_3D(const std::map<int, std::map<int, std::array<int, 3>>>& all_
 	}
 	file << "\n";
 
-	int steps = all_walks.begin()->second.size();
+	size_t steps = all_walks.begin()->second.size();
 
 	for (int step = 0; step < steps; step++)
 	{
@@ -103,7 +98,7 @@ void save_to_csv_3D(const std::map<int, std::map<int, std::array<int, 3>>>& all_
 	file.close();
 }
 
-std::map<int, std::array<int, 3>> simulate_walk_3D()
+std::map<int, std::array<int, 3>> simulate_walk_2_3D()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -138,8 +133,14 @@ void zadanie_2_3D()
 
 	for (int i = 0; i < walks_num; i++)
 	{
-		all_walks[i] = simulate_walk_3D();
+		all_walks[i] = simulate_walk_2_3D();
 	}
 
 	save_to_csv_3D(all_walks);
+}
+
+void zadanie_2()
+{
+	zadanie_2_2D();
+	zadanie_2_3D();
 }

@@ -25,13 +25,19 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="zadanie1.h">
+    <ClInclude Include="zadanie_1.h">
       <Filter>Pliki źródłowe</Filter>
     </ClInclude>
-    <ClInclude Include="zadanie2.h">
+    <ClInclude Include="zadanie_2.h">
       <Filter>Pliki źródłowe</Filter>
     </ClInclude>
-    <ClInclude Include="zadanie3.h">
+    <ClInclude Include="zadanie_3.h">
+      <Filter>Pliki źródłowe</Filter>
+    </ClInclude>
+    <ClInclude Include="zadanie_4.h">
+      <Filter>Pliki źródłowe</Filter>
+    </ClInclude>
+    <ClInclude Include="zadanie_5.h">
       <Filter>Pliki źródłowe</Filter>
     </ClInclude>
   </ItemGroup>

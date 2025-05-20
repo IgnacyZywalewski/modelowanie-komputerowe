@@ -1,8 +1,4 @@
 #pragma once
-#include <random>
-#include <map>
-#include <fstream>
-#include <filesystem>
 
 void save_to_csv_1(std::map<int, int> map_1, std::map<int, int> map_2)
 {

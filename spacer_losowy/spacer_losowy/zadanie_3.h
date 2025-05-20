@@ -1,8 +1,4 @@
 #pragma once
-#include <random>
-#include <map>
-#include <fstream>
-#include <filesystem>
 
 void save_to_csv_3(std::map<int, int> map)
 {
@@ -17,7 +13,7 @@ void save_to_csv_3(std::map<int, int> map)
 	file.close();
 }
 
-int simulate_walk()
+int simulate_walk_3()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -41,7 +37,7 @@ void zadanie_3()
 
 	for (int i = 0; i < walks_num; i++)
 	{
-		int end_position = simulate_walk();
+		int end_position = simulate_walk_3();
 		position_map[end_position]++;
 	}
 

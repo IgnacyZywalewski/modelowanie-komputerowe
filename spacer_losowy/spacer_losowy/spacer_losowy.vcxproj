@@ -134,9 +134,11 @@
     <None Include="wykresy.py" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="zadanie1.h" />
-    <ClInclude Include="zadanie2.h" />
-    <ClInclude Include="zadanie3.h" />
+    <ClInclude Include="zadanie_1.h" />
+    <ClInclude Include="zadanie_2.h" />
+    <ClInclude Include="zadanie_3.h" />
+    <ClInclude Include="zadanie_4.h" />
+    <ClInclude Include="zadanie_5.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
