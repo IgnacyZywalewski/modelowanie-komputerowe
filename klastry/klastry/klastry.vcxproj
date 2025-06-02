@@ -130,6 +130,13 @@
   <ItemGroup>
     <ClCompile Include="klastry.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="wykres.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="model_DLA.h" />
+    <ClInclude Include="model_edena.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
