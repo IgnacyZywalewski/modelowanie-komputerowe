@@ -96,7 +96,7 @@ double calculate_radius(std::vector<std::vector<int>> grid)
 	return radius;
 }
 
-void save_to_csv(std::vector<std::pair<int, int>> radius_vector)
+void save_to_csv(std::vector<std::pair<int, double>> radius_vector)
 {
 	std::filesystem::create_directories("data");
 	std::string filename = "data/radius_eden.csv";
@@ -117,19 +117,17 @@ void model_edena()
 	std::random_device rd;
 	std::mt19937 gen(rd());
 
-	int width = 100;
-	int height = 100;
-	int steps = 1000;
+	int size = 200;
+	int center = size / 2;
+	int steps = 10000;
 
-	std::vector<std::vector<int>> grid(width, std::vector<int>(height, 0));
-	int x = width / 2;
-	int y = height / 2;
-	grid[x][y] = 1;
+	std::vector<std::vector<int>> grid(size, std::vector<int>(size, 0));
+	grid[center][center] = 1;
 
 	std::vector<std::pair<int, int>> active_cells;
-	active_cells.push_back({ x, y });
+	active_cells.push_back({ center, center });
 
-	std::vector<std::pair<int, int>> radius_vector;
+	std::vector<std::pair<int, double>> radius_vector;
 
 	for (int i = 0; i <= steps; i++)
 	{
@@ -139,9 +137,9 @@ void model_edena()
 
 		bool grown = false;
 
-		while (!grown)
+		while (!grown && !active_cells.empty())
 		{
-			std::uniform_int_distribution<int> random_cell(0, active_cells.size() - 1);
+			std::uniform_int_distribution<int> random_cell(0, static_cast<int>(active_cells.size() - 1));
 			int idx = random_cell(gen);
 			std::pair<int, int> active_cell = active_cells[idx];
 			int ax = active_cell.first;
@@ -151,7 +149,7 @@ void model_edena()
 
 			if (!neighbors.empty())
 			{
-				std::uniform_int_distribution<int> random_neighbor(0, neighbors.size() - 1);
+				std::uniform_int_distribution<int> random_neighbor(0, static_cast<int>(neighbors.size() - 1));
 				int idx = random_neighbor(gen);
 				std::pair<int, int> neighbor = neighbors[idx];
 
@@ -173,7 +171,7 @@ void model_edena()
 			}
 		}
 
-		if (i % 100 == 0)
+		if (i % 50 == 0)
 		{
 			double r = calculate_radius(grid);
 			radius_vector.push_back({ i, r });

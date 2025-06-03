@@ -1,6 +1,7 @@
 ﻿import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.patches import RegularPolygon
 
 def zadanie_1():
     df = pd.read_csv("data/radius_eden.csv")
@@ -20,9 +21,9 @@ def zadanie_1():
     plt.xscale('log')
     plt.yscale('log')
 
-    plt.xlabel('Krok symulacji (log scale)')
-    plt.ylabel('Promień klastra (log scale)')
-    plt.title('Promień klastra w czasie (log-log scale)')
+    plt.xlabel('Krok symulacji - N')
+    plt.ylabel('Promień klastra - r')
+    plt.title('Wykres promienia klastra w czasie')
     plt.legend()
     plt.grid(True, which="both", ls="--", lw=0.5)
 
@@ -45,9 +46,9 @@ def zadanie_2():
 
     plt.xscale('log')
     plt.yscale('log')
-    plt.xlabel('Liczba cząsteczek (log)')
-    plt.ylabel('Promień klastra (log)')
-    plt.title('Skalowanie promienia klastra DLA')
+    plt.xlabel('Liczba cząsteczek')
+    plt.ylabel('Promień klastra')
+    plt.title('Wykres promienia klastra DLA')
     plt.grid(True, which='both', ls='--')
     plt.legend()
     plt.tight_layout()
@@ -55,5 +56,5 @@ def zadanie_2():
     plt.show()
 
 
-#zadanie_1()
+zadanie_1()
 zadanie_2()

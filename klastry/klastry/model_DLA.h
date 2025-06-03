@@ -14,13 +14,13 @@ std::pair<int, int> random_direction()
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dir(0, directions.size() - 1);
+    std::uniform_int_distribution<int> dir(0, static_cast<int>(directions.size() - 1));
     int idx = dir(gen);
 
     return directions[idx];
 }
 
-int distance(std::vector<std::vector<int>> grid, int x, int y)
+double distance(std::vector<std::vector<int>> grid, int x, int y)
 {
     return std::sqrt((x - grid.size() / 2) * (x - grid.size() / 2) + (y - grid.size() / 2) * (y - grid.size() / 2));
 }
@@ -60,7 +60,7 @@ void model_DLA()
 {
     int size = 400;
     int center = size / 2;
-    int particles = 5000;
+    int particles = 10000;
 
     std::vector<std::vector<int>> grid(size, std::vector<int>(size, 0));
     grid[center][center] = 1;
@@ -69,34 +69,36 @@ void model_DLA()
     std::ofstream csv("data/radius_DLA.csv");
     csv << "particles,radius\n";
 
-    int max_radius = 0;
+    double max_radius = 0;
 
     for (int p = 1; p <= particles; p++)
     {
         std::cout << p << "\n";
 
         double angle = 2 * 3.14 * ((double)rand() / RAND_MAX);
-        int r = max_radius + 5;
+        double r = max_radius + 5;
         int x = center + int(r * cos(angle));
         int y = center + int(r * sin(angle));
 
         while (true) 
         {
-            auto [dx, dy] = random_direction();
-            x += dx;
-            y += dy;
+            std::pair<int, int> random_dir = random_direction();
+            x += random_dir.first;
+            y += random_dir.second;
 
-            if (x <= 1 || x >= size - 2 || y <= 1 || y >= size - 2) break;
+            if (x <= 1 || x >= size - 2 || y <= 1 || y >= size - 2)
+            {
+                p--;
+                break;
+            }
 
             if (is_adjacent(grid, x, y)) 
             {
                 grid[x][y] = 1;
-                int d = distance(grid, x, y);
+                double d = distance(grid, x, y);
                 if (d > max_radius) max_radius = d;
                 break;
             }
-
-            if (distance(grid, x, y) > max_radius + 10) break;
         }
 
         if (p % 50 == 0) csv << p << "," << max_radius << "\n";

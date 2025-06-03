@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClInclude Include="model_DLA.h" />
     <ClInclude Include="model_edena.h" />
+    <ClInclude Include="platki_sniegu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
