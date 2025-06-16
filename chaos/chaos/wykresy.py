@@ -44,6 +44,31 @@ def zadanie_3():
     plt.show()
 
 
+def zadanie_4():
+    p1 = pd.read_csv("data/zadanie_4/zadanie_4_1.csv")
+    p2 = pd.read_csv("data/zadanie_4/zadanie_4_2.csv")
+
+    plt.figure(figsize=(10, 4))
+    plt.subplot(1, 2, 1)
+    plt.plot(p1['a2'], p1['a2_v'], '.', markersize=1, color='blue')
+    plt.title('Wykres fazowy – Wahadło 1')
+    plt.xlabel('Kąt')
+    plt.ylabel('Prędkość kątowa')
+    plt.grid(True)
+
+    plt.subplot(1, 2, 2)
+    plt.plot(p2['a2'], p2['a2_v'], '.', markersize=1, color='red')
+    plt.title('Wykres fazowy – Wahadło 2')
+    plt.xlabel('Kąt')
+    plt.ylabel('Prędkość kątowa')
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig('data/zadanie_4/zadanie_4.png')
+    plt.show()
+
+
 zadanie_1()
 zadanie_2()
 zadanie_3()
+zadanie_4()
